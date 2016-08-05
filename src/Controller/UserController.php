@@ -62,5 +62,4 @@ class UserController extends AbstractController
             'name' => $user->name,
         ]);
     }
-
 }

@@ -1,7 +1,17 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: xznrs
- * Date: 04.08.16
- * Time: 23:20
- */
+
+use FinanceApp\Controller\CategoriesController;
+use FinanceApp\Repository\CategoriesRepository;
+use FinanceApp\Service\CategoriesService;
+
+$app['categories.controller'] = function ($app) {
+    return new CategoriesController($app['categories.service'],$app['users.service']);
+};
+
+$app['categories.service'] = function ($app) {
+    return new CategoriesService($app['categories.repository']);
+};
+
+$app['categories.repository'] = function ($app) {
+    return new CategoriesRepository($app['db']);
+};

@@ -1,8 +1,11 @@
 <?php
 
-use FinanceApp\Controller\UserController;
-use FinanceApp\Repository\UserRepository;
-use FinanceApp\Service\UserService;
+require __DIR__ . '/../src/app/Account.php';
+require __DIR__ . '/../src/app/Users.php';
+require __DIR__ . '/../src/app/Categories.php';
+require __DIR__ . '/../src/app/Transaction.php';
+require __DIR__ . '/../src/app/Report.php';
+
 use Silex\Provider\DoctrineServiceProvider;
 use Silex\Provider\ServiceControllerServiceProvider;
 use Symfony\Component\HttpFoundation\Request;
@@ -13,7 +16,7 @@ $app->register(new DoctrineServiceProvider(), [
         'host' => '127.0.0.1',
         'dbname' => 'finance',
         'user' => 'root',
-        'password' => '',
+        'password' => 'root',
         'charset' => 'utf8'
     ]
 ]);
@@ -26,20 +29,6 @@ $app->before(function(Request $request) {
     }
 });
 
-// services
-
-$app['users.controller'] = function ($app) {
-    return new UserController($app['users.service']);
-};
-
-$app['users.service'] = function ($app) {
-    return new UserService($app['users.repository']);
-};
-
-$app['users.repository'] = function ($app) {
-    return new UserRepository($app['db']);
-};
-
 // routes
 
 $users = $app['controllers_factory'];
@@ -47,5 +36,19 @@ $users = $app['controllers_factory'];
 $users->post('/users', 'users.controller:register');
 $users->get('/users/me', 'users.controller:getUser');
 $users->put('/users/me', 'users.controller:updateUser');
+
+$users->get('/users/me/accounts', 'account.controller:getAccounts');
+$users->post('/users/me/accounts', 'account.controller:addAccount');
+$users->get('/users/me/accounts/{id}', 'account.controller:getAccount');
+$users->delete('/users/me/accounts/{id}', 'account.controller:deleteAccount');
+
+$users->post('/users/me/accounts/{id}/transactions', 'transaction.controller:addTransaction');
+$users->get('/users/me/accounts/{id}/transactions', 'transaction.controller:getTransactions');
+$users->put('/users/me/accounts/{id_account}/transactions/{id_transaction}', 'transaction.controller:updateTransaction');
+$users->delete('/users/me/accounts/{id_account}/transactions/{id_transaction}', 'transaction.controller:deleteTransaction');
+
+$users->get('/categories', 'categories.controller:getCategories');
+
+$users->get('/users/me/reports', 'report.controller:getReport');
 
 $app->mount('/api', $users);

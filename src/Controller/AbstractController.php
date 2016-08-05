@@ -12,6 +12,10 @@ abstract class AbstractController
 
     protected $userService;
 
+    /**
+     * AbstractController constructor.
+     * @param UserService $userService
+     */
     public function __construct(UserService $userService)
     {
         $this->userService = $userService;
